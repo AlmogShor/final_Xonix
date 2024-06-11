@@ -79,7 +79,15 @@ public class player implements KeyListener {
 
     // Method to check if the monster has caught the player
     private boolean isMonsterCaught() {
-        // Implement logic to check if the monster has caught the player
+        // Iterate over the list of monsters
+        for (monster monster : gamePanel.getMonsters()) {
+            // If a monster is at the same position +- 2px as the player/rival, return true
+            if (Math.abs(monster.getX() - this.x) <= 2 && Math.abs(monster.getY() - y) <= 2) {
+                return true;
+            }
+        }
+
+        // If no monster is at the same position as the player/rival, return false
         return false;
     }
 

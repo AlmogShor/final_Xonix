@@ -72,4 +72,8 @@ public class gamePanel extends JPanel {
         // Check if the cell at the given coordinates is occupied
         return occupied[x][y];
     }
+
+    public List<monster> getMonsters() {
+        return monsters;
+    }
 }

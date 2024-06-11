@@ -22,4 +22,10 @@ public class monster {
         g.setColor(Color.ORANGE);
         g.fillRect(x * Constants.CELL_SIZE, y * Constants.CELL_SIZE, Constants.CELL_SIZE, Constants.CELL_SIZE);
     }
+    public int getX() {
+        return x;
+    }
+    public int getY() {
+        return y;
+    }
 }
