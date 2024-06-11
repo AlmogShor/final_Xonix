@@ -73,15 +73,27 @@ public class gamePanel extends JPanel {
         return occupied[x][y];
     }
 
-    public List<monster> getMonsters() {
-        return monsters;
-    }
-
     public player getPlayer() {
         return player;
     }
 
+    public void setPlayer(player player) {
+        this.player = player;
+    }
+
     public rival getRival() {
         return rival;
+    }
+
+    public void setRival(rival rival) {
+        this.rival = rival;
+    }
+
+    public List<monster> getMonsters() {
+        return monsters;
+    }
+
+    public void setMonsters(List<monster> monsters) {
+    this.monsters = monsters;
     }
 }

@@ -150,6 +150,9 @@ public class player implements KeyListener {
         gamePanel.fillArea(path, this instanceof player ? Color.BLUE : Color.RED);
     }
 
+    public void setGamePanel(src.gamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+    }
 }
 
 

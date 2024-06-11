@@ -36,26 +36,33 @@ public class homeScreen extends JPanel implements ActionListener {
         String rival = (String) rivalComboBox.getSelectedItem();
         int numMonsters = Integer.parseInt((String) monsterComboBox.getSelectedItem());
 
-        gamePanel gamePanel = null;
-        gamePanel = new gamePanel(
-                new player(gamePanel),
-                new rival(gamePanel), // for now, only real time rival is implemented and not an AI
-                generateMonsters(numMonsters)
+        gamePanel gamePanel = new gamePanel(
+                new player(null),
+                new rival(null), // for now, only real time rival is implemented and not an AI
+                new ArrayList<>() // Temporarily empty list of monsters
         );
+        // set the monsters
+        List<monster> monsters = generateMonsters(gamePanel, numMonsters);
+        gamePanel.setMonsters(monsters);
+
+        // Update the player and rival with the gamePanel
+        gamePanel.getPlayer().setGamePanel(gamePanel);
+        gamePanel.getRival().setGamePanel(gamePanel);
+
         frame.remove(this);
         frame.add(gamePanel);
         frame.revalidate();
     }
 
-    private List<monster> generateMonsters(int num) {
+    private List<monster> generateMonsters(gamePanel gamePanel ,int num) {
         // Generate monsters at random positions
         List<monster> monsters = new ArrayList<>();
         for (int i = 0; i < num; i++) {
             // Generate a new monster in a random position
             int x = (int) (Math.random() * Constants.GRID_WIDTH);
             int y = (int) (Math.random() * Constants.GRID_HEIGHT);
-//            monster monster = new monster(this.frame.getOwner(), x, y); // @TODO: Fix the frame to return the gamePanel
-//            monsters.add(monster);
+            monster monster = new monster(gamePanel, x, y); // @TODO: Fix the frame to return the gamePanel
+            monsters.add(monster);
         }
         return monsters;
     }

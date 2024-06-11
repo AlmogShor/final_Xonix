@@ -106,5 +106,8 @@ public class rival implements KeyListener {
         return y;
     }
 
+    public void setGamePanel(src.gamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+    }
 
 }
