@@ -73,8 +73,8 @@ public class player implements KeyListener {
 
     // Method to check if the player is in a safe zone
     private void checkSafeZone() {
-        // Implement logic to check if the player is in a safe zone
-        // Set inSafeZone to true if the player reaches a safe zone
+        // Check if the current cell is occupied
+        isSafe = gamePanel.isOccupied(x, y);
     }
 
     // Method to check if the monster has caught the player

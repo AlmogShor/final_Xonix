@@ -68,4 +68,8 @@ public class gamePanel extends JPanel {
             }
         }
     }
+    public boolean isOccupied(int x, int y) {
+        // Check if the cell at the given coordinates is occupied
+        return occupied[x][y];
+    }
 }

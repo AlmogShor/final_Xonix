@@ -72,8 +72,8 @@ public class rival implements KeyListener {
 
     // Method to check if the rival is in a safe zone
     private void checkSafeZone() {
-        // Implement logic to check if the rival is in a safe zone
-        // Set isSafe to true if the rival reaches a safe zone
+        // Check if the current cell is occupied
+        isSafe = gamePanel.isOccupied(x, y);
     }
 
     // Getter and setter for computer control
