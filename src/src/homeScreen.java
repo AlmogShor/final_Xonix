@@ -52,6 +52,13 @@ public class homeScreen extends JPanel implements ActionListener {
         frame.remove(this);
         frame.add(gamePanel);
         frame.revalidate();
+        // add the key listener
+        frame.addKeyListener(gamePanel.getPlayer());
+        frame.addKeyListener(gamePanel.getRival());
+        // Start the game loop
+        new Thread(new gameLoop(gamePanel)).start();
+        gamePanel.setFocusable(true);
+
     }
 
     private List<monster> generateMonsters(gamePanel gamePanel ,int num) {
