@@ -96,4 +96,15 @@ public class rival implements KeyListener {
     public void setComputerControlled(boolean isComputerControlled) {
         this.isComputerControlled = isComputerControlled;
     }
+
+    // Getters and setters for x, y, and other rival properties
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+
 }

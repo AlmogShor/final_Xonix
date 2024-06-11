@@ -76,4 +76,12 @@ public class gamePanel extends JPanel {
     public List<monster> getMonsters() {
         return monsters;
     }
+
+    public player getPlayer() {
+        return player;
+    }
+
+    public rival getRival() {
+        return rival;
+    }
 }
