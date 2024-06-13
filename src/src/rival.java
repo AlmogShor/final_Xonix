@@ -4,12 +4,13 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
 import utils.*;
 
 public class rival implements KeyListener {
     private int x, y, dx = 0, dy = 0;
     private boolean isSafe;
-    private int stepSize = 10; // Size of each step in pixels
+    private int stepSize = 1; // Size of each step in pixels
     private gamePanel gamePanel;
     private boolean isComputerControlled = false; // Flag for AI control
 
@@ -20,13 +21,15 @@ public class rival implements KeyListener {
     }
 
     public void move(int dx, int dy) {
-        this.dx = dx;
-        this.dy = dy;
 
-        // Update rival position
-        x += dx * stepSize;
-        y += dy * stepSize;
+        int newX = this.x + dx * stepSize;
+        int newY = this.y + dy * stepSize;
 
+        // Check if the new position is within the game area
+        if (newX >= 0 && newX < Constants.GRID_WIDTH && newY >= 0 && newY < Constants.GRID_HEIGHT) {
+            this.setX(newX);
+            this.setY(newY);
+        }
         // Check if rival is in a safe zone
         checkSafeZone();
     }
@@ -75,6 +78,7 @@ public class rival implements KeyListener {
         // Check if the current cell is occupied
         isSafe = gamePanel.isOccupied(x, y);
     }
+
     private boolean isMonsterCaught() {
         // Iterate over the list of monsters
         for (monster monster : gamePanel.getMonsters()) {
@@ -102,8 +106,16 @@ public class rival implements KeyListener {
         return x;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
     public int getY() {
         return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
     public void setGamePanel(src.gamePanel gamePanel) {

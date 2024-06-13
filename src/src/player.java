@@ -12,7 +12,7 @@ import utils.*;
 public class player implements KeyListener {
     private int x, y, dx = 0, dy = 0;
     private boolean isSafe = true;
-    private int stepSize = 10; // Size of each step in pixels
+    private int stepSize = 1; // Size of each step in pixels
     private gamePanel gamePanel;
 
     public player(gamePanel gamePanel) {
@@ -23,12 +23,14 @@ public class player implements KeyListener {
     }
 
     public void move(int dx, int dy) {
-        this.dx = dx;
-        this.dy = dy;
+        int newX = this.x + dx * stepSize;
+        int newY = this.y + dy * stepSize;
 
-        // Update player position
-        x += dx * stepSize;
-        y += dy * stepSize;
+        // Check if the new position is within the game area
+        if (newX >= 0 && newX < Constants.GRID_WIDTH && newY >= 0 && newY < Constants.GRID_HEIGHT) {
+            this.setX(newX);
+            this.setY(newY);
+        }
         // Check if player is in a safe zone
         checkSafeZone();
         // If player is not in a safe zone, continue moving
@@ -121,6 +123,7 @@ public class player implements KeyListener {
     public void setInSafeZone(boolean inSafeZone) {
         this.isSafe = inSafeZone;
     }
+
     public void conquerArea(int dx, int dy) {
         // Start from the current position
         int startX = x;

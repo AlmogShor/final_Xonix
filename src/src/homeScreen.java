@@ -57,7 +57,8 @@ public class homeScreen extends JPanel implements ActionListener {
         frame.addKeyListener(gamePanel.getRival());
         // Start the game loop
         new Thread(new gameLoop(gamePanel)).start();
-        gamePanel.setFocusable(true);
+        frame.setFocusable(true);
+        frame.requestFocusInWindow();
 
     }
 
