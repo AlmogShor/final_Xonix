@@ -4,18 +4,17 @@ import utils.*;
 
 public class gameLoop implements Runnable {
     private gamePanel gamePanel;
+    private Runnable task;
 
-    public gameLoop(gamePanel gamePanel) {
+    public gameLoop(gamePanel gamePanel, Runnable task) {
         this.gamePanel = gamePanel;
+        this.task = task;
     }
 
     @Override
     public void run() {
         while (true) {
-            // Update game state
-            for (monster monster : gamePanel.getMonsters()) {
-                monster.move();
-            }
+            task.run();
             gamePanel.repaint();
 
             // Sleep for a bit to control the game speed

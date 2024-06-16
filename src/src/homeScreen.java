@@ -38,7 +38,7 @@ public class homeScreen extends JPanel implements ActionListener {
 
         gamePanel gamePanel = new gamePanel(
                 new player(null),
-                new rival(null), // for now, only real time rival is implemented and not an AI
+                new rival(null),
                 new ArrayList<>() // Temporarily empty list of monsters
         );
         // set the monsters
@@ -55,11 +55,18 @@ public class homeScreen extends JPanel implements ActionListener {
         // add the key listener
         frame.addKeyListener(gamePanel.getPlayer());
         frame.addKeyListener(gamePanel.getRival());
-        // Start the game loop
-        new Thread(new gameLoop(gamePanel)).start();
+
+        // Start the game loop for player, rival, and monsters in separate threads
+        new Thread(new gameLoop(gamePanel, () -> gamePanel.getPlayer().move())).start();
+        new Thread(new gameLoop(gamePanel, () -> gamePanel.getRival().move())).start();
+        new Thread(new gameLoop(gamePanel, () -> {
+            for (monster m : gamePanel.getMonsters()) {
+                m.move();
+            }
+        })).start();
+
         frame.setFocusable(true);
         frame.requestFocusInWindow();
-
     }
 
     private List<monster> generateMonsters(gamePanel gamePanel ,int num) {

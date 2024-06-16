@@ -26,25 +26,25 @@ public class gameTest {
 
     @Test
     public void playerMovesIntoSafeZone() {
-        player.move(1, 0);
+        player.move();
         assertTrue(player.isInSafeZone());
     }
 
     @Test
     public void playerMovesIntoDangerZone() {
-        player.move(5, 5);
+        player.move();
         assertFalse(player.isInSafeZone());
     }
 
     @Test
     public void rivalMovesIntoSafeZone() {
-        rival.move(1, 0);
+        rival.move();
         assertTrue(gamePanel.isOccupied(rival.getX(), rival.getY()));
     }
 
     @Test
     public void rivalMovesIntoDangerZone() {
-        rival.move(5, 5);
+        rival.move();
         assertFalse(gamePanel.isOccupied(rival.getX(), rival.getY()));
     }
 

@@ -9,7 +9,7 @@ import java.awt.Point;
 
 import utils.*;
 
-public class player implements KeyListener {
+public class player implements KeyListener, Runnable {
     private int x, y, dx = 0, dy = 0;
     private boolean isSafe = true;
     private int stepSize = 1; // Size of each step in pixels
@@ -22,28 +22,30 @@ public class player implements KeyListener {
         this.isSafe = true;
     }
 
-    public void move(int dx, int dy) {
-        int newX = this.x + dx * stepSize;
-        int newY = this.y + dy * stepSize;
+    public void move() {
+        if (this.dx != 0 || this.dy != 0) {
+            int newX = this.x + this.dx * stepSize;
+            int newY = this.y + this.dy * stepSize;
 
-        // Check if the new position is within the game area
-        if (newX >= 0 && newX < Constants.GRID_WIDTH && newY >= 0 && newY < Constants.GRID_HEIGHT) {
-            this.setX(newX);
-            this.setY(newY);
-        }
-        // Check if player is in a safe zone
-        checkSafeZone();
-        // If player is not in a safe zone, continue moving
-        while (!isSafe && !isMonsterCaught()) {
-            x += dx * stepSize;
-            y += dy * stepSize;
+            // Check if the new position is within the game area
+            if (newX >= 0 && newX < Constants.GRID_WIDTH && newY >= 0 && newY < Constants.GRID_HEIGHT) {
+                this.setX(newX);
+                this.setY(newY);
+            }
+            // Check if player is in a safe zone
             checkSafeZone();
+            // If player is not in a safe zone, continue moving
+            while (!isSafe && !isMonsterCaught()) {
+                x += this.dx * stepSize;
+                y += this.dy * stepSize;
+                checkSafeZone();
 
-            // Add delay for movement if necessary
-            try {
-                Thread.sleep(100); // Adjust sleep duration as needed
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
+                // Add delay for movement if necessary
+                try {
+                    Thread.sleep(100); // Adjust sleep duration as needed
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }
@@ -53,24 +55,41 @@ public class player implements KeyListener {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_LEFT) {
-            move(-1, 0);
+            this.dx = -1;
+            this.dy = 0;
         } else if (key == KeyEvent.VK_RIGHT) {
-            move(1, 0);
+            this.dx = 1;
+            this.dy = 0;
         } else if (key == KeyEvent.VK_UP) {
-            move(0, -1);
+            this.dx = 0;
+            this.dy = -1;
         } else if (key == KeyEvent.VK_DOWN) {
-            move(0, 1);
+            this.dx = 0;
+            this.dy = 1;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // No action needed for key release in this context
+        this.dx = 0;
+        this.dy = 0;
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
         // No action needed for key typed in this context
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            move();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     // Method to check if the player is in a safe zone
@@ -93,69 +112,32 @@ public class player implements KeyListener {
         return false;
     }
 
-
     public void draw(Graphics g) {
         g.setColor(Color.BLUE);
         g.fillRect(x * Constants.CELL_SIZE, y * Constants.CELL_SIZE, Constants.CELL_SIZE, Constants.CELL_SIZE);
     }
 
-    // Getters and setters for x, y, and other player properties
     public int getX() {
         return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
     }
 
     public int getY() {
         return y;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
     public void setY(int y) {
         this.y = y;
     }
 
-    public boolean isInSafeZone() {
-        return isSafe;
-    }
-
-    public void setInSafeZone(boolean inSafeZone) {
-        this.isSafe = inSafeZone;
-    }
-
-    public void conquerArea(int dx, int dy) {
-        // Start from the current position
-        int startX = x;
-        int startY = y;
-
-        // List to store the path taken by the player/rival
-        List<Point> path = new ArrayList<>();
-
-        // Move in the specified direction until reaching a safe zone or caught by a monster
-        while (!isSafe && !isMonsterCaught()) {
-            // Mark the current cell as occupied
-            path.add(new Point(x, y));
-
-            // Move to the next cell
-            x += dx * stepSize;
-            y += dy * stepSize;
-
-            // Check if the player/rival is in a safe zone or caught by a monster
-            checkSafeZone();
-            if (isMonsterCaught()) {
-                // If caught by a monster, stop conquering and return
-                return;
-            }
-        }
-
-        // If a safe zone is reached, fill the enclosed area
-        gamePanel.fillArea(path, this instanceof player ? Color.BLUE : Color.RED);
-    }
-
-    public void setGamePanel(src.gamePanel gamePanel) {
+    public void setGamePanel(gamePanel gamePanel) {
         this.gamePanel = gamePanel;
     }
+
+    public boolean isInSafeZone() {
+        return this.isSafe;
+    }
 }
-
-
