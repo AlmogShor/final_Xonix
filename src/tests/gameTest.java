@@ -9,19 +9,19 @@ import src.*;
 
 
 public class gameTest {
-    private gamePanel gamePanel;
-    private player player;
-    private rival rival;
+    private GamePanel gamePanel;
+    private Player player;
+    private Rival rival;
     private monster monster;
 
     @BeforeEach
     public void setup() {
-        player = new player(gamePanel);
-        rival = new rival(gamePanel);
+        player = new Player(gamePanel);
+        rival = new Rival(gamePanel);
         monster = new monster(gamePanel, 5, 5);
         List<monster> monsters = new ArrayList<>();
         monsters.add(monster);
-        gamePanel = new gamePanel(player, rival, monsters);
+        gamePanel = new GamePanel(player, rival, monsters);
     }
 
     @Test

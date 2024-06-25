@@ -8,13 +8,13 @@ import java.awt.Point;
 
 import utils.*;
 
-public class gamePanel extends JPanel {
-    private player player;
-    private rival rival;
+public class GamePanel extends JPanel {
+    private Player player;
+    private Rival rival;
     private List<monster> monsters;
     private boolean[][] occupied;
 
-    public gamePanel(player player, rival rival, List<monster> monsters) {
+    public GamePanel(Player player, Rival rival, List<monster> monsters) {
         this.player = player;
         this.rival = rival;
         this.monsters = monsters;
@@ -73,19 +73,19 @@ public class gamePanel extends JPanel {
         return occupied[x][y];
     }
 
-    public player getPlayer() {
+    public Player getPlayer() {
         return player;
     }
 
-    public void setPlayer(player player) {
+    public void setPlayer(Player player) {
         this.player = player;
     }
 
-    public rival getRival() {
+    public Rival getRival() {
         return rival;
     }
 
-    public void setRival(rival rival) {
+    public void setRival(Rival rival) {
         this.rival = rival;
     }
 

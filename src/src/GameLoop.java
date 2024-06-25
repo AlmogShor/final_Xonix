@@ -1,12 +1,10 @@
 package src;
 
-import utils.*;
-
-public class gameLoop implements Runnable {
-    private gamePanel gamePanel;
+public class GameLoop implements Runnable {
+    private GamePanel gamePanel;
     private Runnable task;
 
-    public gameLoop(gamePanel gamePanel, Runnable task) {
+    public GameLoop(GamePanel gamePanel, Runnable task) {
         this.gamePanel = gamePanel;
         this.task = task;
     }

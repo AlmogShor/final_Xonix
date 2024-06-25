@@ -7,14 +7,14 @@ import java.awt.event.KeyListener;
 
 import utils.*;
 
-public class rival implements KeyListener, Runnable {
+public class Rival implements KeyListener, Runnable {
     private int x, y, dx = 0, dy = 0;
     private boolean isSafe;
     private int stepSize = 1; // Size of each step in pixels
-    private gamePanel gamePanel;
+    private GamePanel gamePanel;
     private boolean isComputerControlled = false; // Flag for AI control
 
-    public rival(gamePanel gamePanel) {
+    public Rival(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         this.x = Constants.START_X_RIVAL;
         this.y = Constants.START_Y_RIVAL;
@@ -126,7 +126,7 @@ public class rival implements KeyListener, Runnable {
         this.y = y;
     }
 
-    public void setGamePanel(gamePanel gamePanel) {
+    public void setGamePanel(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
     }
 

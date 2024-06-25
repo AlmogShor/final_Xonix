@@ -4,18 +4,16 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.*;
-import java.awt.Point;
 
 import utils.*;
 
-public class player implements KeyListener, Runnable {
+public class Player implements KeyListener, Runnable {
     private int x, y, dx = 0, dy = 0;
     private boolean isSafe = true;
     private int stepSize = 1; // Size of each step in pixels
-    private gamePanel gamePanel;
+    private GamePanel gamePanel;
 
-    public player(gamePanel gamePanel) {
+    public Player(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         this.x = Constants.START_X_player;
         this.y = Constants.START_Y_player;
@@ -133,7 +131,7 @@ public class player implements KeyListener, Runnable {
         this.y = y;
     }
 
-    public void setGamePanel(gamePanel gamePanel) {
+    public void setGamePanel(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
     }
 

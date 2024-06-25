@@ -6,9 +6,9 @@ import utils.*;
 
 public class monster {
     private int x, y;
-    private gamePanel gamePanel;
+    private GamePanel gamePanel;
 
-    public monster(gamePanel gamePanel, int startX, int startY) {
+    public monster(GamePanel gamePanel, int startX, int startY) {
         this.gamePanel = gamePanel;
         this.x = startX;
         this.y = startY;
