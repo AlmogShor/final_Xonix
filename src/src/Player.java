@@ -4,6 +4,9 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.awt.Point;
 
 import utils.*;
 
@@ -12,6 +15,8 @@ public class Player implements KeyListener, Runnable {
     private boolean isSafe = true;
     private int stepSize = 1; // Size of each step in pixels
     private GamePanel gamePanel;
+    private List<Point> path = new CopyOnWriteArrayList<>();
+    private int score;
 
     public Player(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -20,7 +25,13 @@ public class Player implements KeyListener, Runnable {
         this.isSafe = true;
     }
 
+    public Color getColor() {
+        return Color.BLUE;
+    }
+
     public void move() {
+        // if player hits a wall, stop moving
+
         if (this.dx != 0 || this.dy != 0) {
             int newX = this.x + this.dx * stepSize;
             int newY = this.y + this.dy * stepSize;
@@ -29,23 +40,26 @@ public class Player implements KeyListener, Runnable {
             if (newX >= 0 && newX < Constants.GRID_WIDTH && newY >= 0 && newY < Constants.GRID_HEIGHT) {
                 this.setX(newX);
                 this.setY(newY);
-            }
-            // Check if player is in a safe zone
-            checkSafeZone();
-            // If player is not in a safe zone, continue moving
-            while (!isSafe && !isMonsterCaught()) {
-                x += this.dx * stepSize;
-                y += this.dy * stepSize;
-                checkSafeZone();
+                // Add the new position to the path if player is not in safe zone
+                if (isInSafeZone()) {
+                    isSafe = true;
+                }
 
-                // Add delay for movement if necessary
-                try {
-                    Thread.sleep(100); // Adjust sleep duration as needed
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
+                if (!isInSafeZone() && isSafe) {
+                    path.add(new Point(newX, newY));
                 }
             }
+
         }
+    }
+
+    public List<Point> getPath() {
+        return path;
+    }
+
+    public void clearPath() {
+        path.clear();
+        isSafe = false;
     }
 
     @Override
@@ -69,8 +83,8 @@ public class Player implements KeyListener, Runnable {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        this.dx = 0;
-        this.dy = 0;
+        // this.dx = 0;
+        // this.dy = 0;
     }
 
     @Override
@@ -90,16 +104,10 @@ public class Player implements KeyListener, Runnable {
         }
     }
 
-    // Method to check if the player is in a safe zone
-    private void checkSafeZone() {
-        // Check if the current cell is occupied
-        isSafe = gamePanel.isOccupied(x, y);
-    }
-
     // Method to check if the monster has caught the player
     private boolean isMonsterCaught() {
         // Iterate over the list of monsters
-        for (monster monster : gamePanel.getMonsters()) {
+        for (Monster monster : gamePanel.getMonsters()) {
             // If a monster is at the same position +- 2px as the player/rival, return true
             if (Math.abs(monster.getX() - this.x) <= 2 && Math.abs(monster.getY() - y) <= 2) {
                 return true;
@@ -111,6 +119,13 @@ public class Player implements KeyListener, Runnable {
     }
 
     public void draw(Graphics g) {
+
+        // Draw the path
+        g.setColor(Constants.PLAYER_TRAIL_COLOR);
+        for (Point point : path) {
+            g.fillRect(point.x * Constants.CELL_SIZE, point.y * Constants.CELL_SIZE, Constants.CELL_SIZE,
+                    Constants.CELL_SIZE);
+        }
         g.setColor(Color.BLUE);
         g.fillRect(x * Constants.CELL_SIZE, y * Constants.CELL_SIZE, Constants.CELL_SIZE, Constants.CELL_SIZE);
     }
@@ -136,6 +151,17 @@ public class Player implements KeyListener, Runnable {
     }
 
     public boolean isInSafeZone() {
-        return this.isSafe;
+        int borderSize = 1; // Size of the border in pixels
+
+        return x < borderSize || x > Constants.GRID_WIDTH - 1 - borderSize ||
+                y < borderSize || y > Constants.GRID_HEIGHT - 1 - borderSize || gamePanel.isOccupied(x, y);
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

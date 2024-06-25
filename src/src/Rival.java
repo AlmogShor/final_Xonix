@@ -1,9 +1,12 @@
 package src;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import utils.*;
 
@@ -13,11 +16,19 @@ public class Rival implements KeyListener, Runnable {
     private int stepSize = 1; // Size of each step in pixels
     private GamePanel gamePanel;
     private boolean isComputerControlled = false; // Flag for AI control
+    private int score;
+    private List<Point> path = new CopyOnWriteArrayList<>();
+
 
     public Rival(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
-        this.x = Constants.START_X_RIVAL;
-        this.y = Constants.START_Y_RIVAL;
+        this.x = Constants.GRID_WIDTH - 1;
+        this.y = Constants.GRID_HEIGHT - 1;
+        this.isSafe = true;
+    }
+
+    public Color getColor() {
+        return Color.RED;
     }
 
     public void move() {
@@ -32,10 +43,26 @@ public class Rival implements KeyListener, Runnable {
             if (newX >= 0 && newX < Constants.GRID_WIDTH && newY >= 0 && newY < Constants.GRID_HEIGHT) {
                 this.setX(newX);
                 this.setY(newY);
+
+                // Add the new position to the path if player is not in safe zone
+                if (isInSafeZone()) {
+                    isSafe = true;
+                }
+                if (!isInSafeZone() && isSafe) {
+                    path.add(new Point(newX, newY));
+                }
             }
             // Check if rival is in a safe zone
-            checkSafeZone();
         }
+    }
+
+    public List<Point> getPath() {
+        return path;
+    }
+
+    public void clearPath() {
+        path.clear();
+        isSafe = false;
     }
 
     @Override
@@ -61,8 +88,7 @@ public class Rival implements KeyListener, Runnable {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        dx = 0;
-        dy = 0;
+
     }
 
     @Override
@@ -90,7 +116,7 @@ public class Rival implements KeyListener, Runnable {
 
     private boolean isMonsterCaught() {
         // Iterate over the list of monsters
-        for (monster monster : gamePanel.getMonsters()) {
+        for (Monster monster : gamePanel.getMonsters()) {
             // If a monster is at the same position as the player/rival, return true
             if (Math.abs(monster.getX() - this.x) <= 2 && Math.abs(monster.getY() - this.y) <= 2) {
                 return true;
@@ -126,12 +152,34 @@ public class Rival implements KeyListener, Runnable {
         this.y = y;
     }
 
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     public void setGamePanel(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
     }
 
     public void draw(Graphics g) {
+        // Draw the path
+        g.setColor(Constants.RIVAL_TRAIL_COLOR);
+        for (Point point : path) {
+            g.fillRect(point.x * Constants.CELL_SIZE, point.y * Constants.CELL_SIZE, Constants.CELL_SIZE,
+                    Constants.CELL_SIZE);
+        }
         g.setColor(Color.RED);
         g.fillRect(x * Constants.CELL_SIZE, y * Constants.CELL_SIZE, Constants.CELL_SIZE, Constants.CELL_SIZE);
     }
+
+    public boolean isInSafeZone() {
+        int borderSize = 1; // Size of the border in pixels
+
+        return x < borderSize || x > Constants.GRID_WIDTH - 1 - borderSize ||
+                y < borderSize || y > Constants.GRID_HEIGHT - 1 - borderSize || gamePanel.isOccupied(x, y);
+    }
+
 }

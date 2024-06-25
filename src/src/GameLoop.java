@@ -1,5 +1,9 @@
 package src;
 
+import javax.swing.JOptionPane;
+
+import utils.*;
+
 public class GameLoop implements Runnable {
     private GamePanel gamePanel;
     private Runnable task;
@@ -15,6 +19,10 @@ public class GameLoop implements Runnable {
             task.run();
             gamePanel.repaint();
 
+            if (gamePanel.getGameOver() != -1) {
+                break;
+            }
+
             // Sleep for a bit to control the game speed
             try {
                 Thread.sleep(100);
@@ -22,5 +30,6 @@ public class GameLoop implements Runnable {
                 e.printStackTrace();
             }
         }
+
     }
 }

@@ -57,7 +57,7 @@ public class HomeScreen extends JPanel implements ActionListener {
                 new Rival(null),
                 new CopyOnWriteArrayList<>());
         // set the monsters
-        CopyOnWriteArrayList<monster> monsters = generateMonsters(gamePanel, numMonsters);
+        CopyOnWriteArrayList<Monster> monsters = generateMonsters(gamePanel, numMonsters);
         gamePanel.setMonsters(monsters);
 
         // Update the player and rival with the gamePanel
