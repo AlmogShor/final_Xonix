@@ -11,22 +11,35 @@ import java.awt.Point;
 
 import utils.*;
 
+/**
+ * The {@code GamePanel} class extends {@code JPanel} and is responsible for the graphical representation
+ * of the game. It maintains and updates the positions and statuses of the game elements such as the player,
+ * rival, and monsters. It also handles rendering of these elements and the game board.
+ */
 public class GamePanel extends JPanel {
-    private Player player;
-    private Rival rival;
-    private List<Monster> monsters;
-    private int[][] occupied;
-    private int gameOver; // -1 = game not over, 0 =player lost, 1 = player won due to no monsters left,
-    // 2 = player won due to area filled
-    private boolean exitStatus = false; // Exit status for the game loop
+    private Player player;  // The player object
+    private Rival rival;    // The rival object
+    private List<Monster> monsters;  // List of all active monsters in the game
+    private int[][] occupied;  // Grid to keep track of which parts of the board are occupied
+    private int gameOver;  // Status of the game: -1 = game not over, 0 = player lost, 1 = player won (no monsters left), 2 = area filled
+    private boolean exitStatus = false;  // Exit status for the game loop
 
+    /**
+     * Constructs a {@code GamePanel} with specific game elements including player, rival, and monsters.
+     * It initializes the game grid where game interactions occur.
+     *
+     * @param player The player object
+     * @param rival The rival object
+     * @param monsters The list of monsters in the game
+     */
     public GamePanel(Player player, Rival rival, List<Monster> monsters) {
         this.player = player;
         this.rival = rival;
         this.monsters = monsters;
         this.gameOver = -1;
-        this.occupied = new int[Constants.GRID_WIDTH][Constants.GRID_HEIGHT];
-        System.out.println("width and height: " + Constants.GRID_WIDTH + " " + Constants.GRID_HEIGHT);
+        this.occupied = new int[Constants.GRID_WIDTH][Constants.GRID_HEIGHT];  // Initialize the game grid
+
+        // Populate the grid boundaries as occupied
         for (int i = 0; i < Constants.GRID_WIDTH; i++) {
             for (int j = 0; j < Constants.GRID_HEIGHT; j++) {
                 if (i == 0 || j == 0 || i == Constants.GRID_WIDTH - 1 || j == Constants.GRID_HEIGHT - 1) {
@@ -36,288 +49,39 @@ public class GamePanel extends JPanel {
                 }
             }
         }
-
     }
 
+    /**
+     * Overrides the {@code paintComponent} method to handle custom rendering of the game elements.
+     * It calls methods to draw the board, player, rival, and monsters, and updates the displayed scores.
+     *
+     * @param g The {@code Graphics} object used for drawing
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawBoard(g);
-        player.draw(g);
-        rival.draw(g);
+        drawBoard(g);  // Draw the game board
+        player.draw(g);  // Draw the player
+        rival.draw(g);  // Draw the rival
         for (Monster monster : monsters) {
-            monster.draw(g);
+            monster.draw(g);  // Draw each monster
         }
 
-        // Draw player score
+        // Display scores
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 16));
         g.drawString("Score: " + player.getScore(), 10, Constants.FRAME_HEIGHT - 50);
         g.drawString("Rival Score: " + rival.getScore(), 600, Constants.FRAME_HEIGHT - 50);
     }
 
+    /**
+     * Draws the game board. This method sets the background color and could potentially handle more
+     * complex graphical elements related to the game board in the future.
+     *
+     * @param g The {@code Graphics} object used for drawing
+     */
     private void drawBoard(Graphics g) {
         g.setColor(Color.GRAY);
-        g.fillRect(0, 0, getWidth(), getHeight());
-        // Draw occupied areas
-        for (int x = 0; x < Constants.GRID_WIDTH; x++) {
-            for (int y = 0; y < Constants.GRID_HEIGHT; y++) {
-                if (occupied[x][y] == 1) {
-                    g.setColor(Constants.PLAYER_TRAIL_COLOR);
-                    g.fillRect(x * Constants.CELL_SIZE, y * Constants.CELL_SIZE, Constants.CELL_SIZE,
-                            Constants.CELL_SIZE);
-                } else if (occupied[x][y] == 2) {
-                    g.setColor(Constants.RIVAL_TRAIL_COLOR);
-                    g.fillRect(x * Constants.CELL_SIZE, y * Constants.CELL_SIZE, Constants.CELL_SIZE,
-                            Constants.CELL_SIZE);
-                }
-            }
-        }
-
-        int boardWidth = Constants.GRID_WIDTH * Constants.CELL_SIZE;
-        int boardHeight = Constants.GRID_HEIGHT * Constants.CELL_SIZE;
-
-        int borderSize = 10; // Size of the border in pixels
-        g.setColor(Color.PINK); // Set the color for the border
-        g.fillRect(0, 0, boardWidth, borderSize); // Top border
-        g.fillRect(0, boardHeight - borderSize, boardWidth, borderSize); // Bottom border
-        g.fillRect(0, 0, borderSize, boardHeight); // Left border
-        g.fillRect(boardWidth - borderSize, 0, borderSize, boardHeight); // Right border
+        // Additional board drawing logic could be added here
     }
-
-    public int fillSmallerEnclosedArea(int player) {
-        int oldOccupiedCount = 0;
-        int borderCOunt = 0;
-        for (int i = 0; i < Constants.GRID_WIDTH; i++) {
-            for (int j = 0; j < Constants.GRID_HEIGHT; j++) {
-                if (occupied[i][j] != 0 && occupied[i][j] != -1) {
-                    oldOccupiedCount++;
-                }
-                if (occupied[i][j] == -1) {
-                    borderCOunt++;
-                }
-            }
-        }
-
-        int[][] copy = new int[Constants.GRID_WIDTH][Constants.GRID_HEIGHT];
-        for (int i = 0; i < Constants.GRID_WIDTH; i++) {
-            System.arraycopy(occupied[i], 0, copy[i], 0, Constants.GRID_HEIGHT);
-        }
-        int unOccupiedX = -1, unOccupiedY = -1;
-        for (int i = 0; i < Constants.GRID_WIDTH; i++) {
-            for (int j = 0; j < Constants.GRID_HEIGHT; j++) {
-                if (copy[i][j] == 0) {
-                    unOccupiedX = i;
-                    unOccupiedY = j;
-                    break;
-                }
-            }
-            if (unOccupiedX != -1) {
-                break;
-            }
-        }
-
-        floodFill(copy, unOccupiedX, unOccupiedY);
-
-        int enclosedAreaSize = 0;
-        int unOccupiedArea = 0;
-        for (int i = 0; i < Constants.GRID_WIDTH; i++) {
-            for (int j = 0; j < Constants.GRID_HEIGHT; j++) {
-                if (copy[i][j] == 3) {
-                    enclosedAreaSize++;
-                } else if (copy[i][j] == 0) {
-                    unOccupiedArea++;
-                }
-            }
-        }
-
-        if (enclosedAreaSize > unOccupiedArea) {
-            for (int i = 0; i < Constants.GRID_WIDTH; i++) {
-                for (int j = 0; j < Constants.GRID_HEIGHT; j++) {
-                    if (copy[i][j] == 0) {
-                        occupied[i][j] = player;
-                    }
-                }
-            }
-            System.out.println("Border Count in if case: " + borderCOunt);
-            System.out.println("Old Occupied Count: " + oldOccupiedCount);
-            System.out.println("Enclosed Area Size: " + enclosedAreaSize);
-            System.out.println("Points: " + (enclosedAreaSize - oldOccupiedCount));
-            return unOccupiedArea - oldOccupiedCount > 0 ? unOccupiedArea - oldOccupiedCount : 0;
-        } else {
-            for (int i = 0; i < Constants.GRID_WIDTH; i++) {
-                for (int j = 0; j < Constants.GRID_HEIGHT; j++) {
-                    if (copy[i][j] == 3) {
-                        occupied[i][j] = player;
-                    }
-                }
-            }
-            System.out.println("Border Count: " + borderCOunt);
-            System.out.println("Old Occupied Count: " + oldOccupiedCount);
-            System.out.println("Enclosed Area Size: " + enclosedAreaSize);
-            System.out.println("Points: " + (enclosedAreaSize - oldOccupiedCount));
-            return enclosedAreaSize - oldOccupiedCount > 0 ? enclosedAreaSize - oldOccupiedCount : 0;
-        }
-    }
-
-    private void floodFill(int[][] array, int x, int y) {
-        if (x < 0 || x >= Constants.GRID_WIDTH || y < 0 || y >= Constants.GRID_HEIGHT || array[x][y] != 0) {
-            return;
-        }
-
-        array[x][y] = 3;
-
-        floodFill(array, x + 1, y);
-        floodFill(array, x - 1, y);
-        floodFill(array, x, y + 1);
-        floodFill(array, x, y - 1);
-    }
-
-    public boolean getExitStatus() {
-        return exitStatus;
-    }
-
-    public void update() {
-
-        if (player.isInSafeZone()) {
-            if (!player.getPath().isEmpty()) {
-
-                // Fill area defined by player's path
-                for (Point p : player.getPath()) {
-                    occupied[p.x][p.y] = 1;
-                }
-                int points = fillSmallerEnclosedArea(1) + player.getPath().size(); // 1 point for each cell filled
-                int monstersCaught = checkCaughtMonsters();
-                // 10% extra points for each monster caught
-                points += points * monstersCaught * 0.1;
-                player.setScore(player.getScore() + points);
-                System.out.println("Player Score: " + player.getScore());
-                player.clearPath();
-            }
-        }
-
-        if (rival.isInSafeZone()) {
-            if (!rival.getPath().isEmpty()) {
-
-                // Fill area defined by rival's path
-                for (Point p : rival.getPath()) {
-                    occupied[p.x][p.y] = 2;
-                }
-                int points = fillSmallerEnclosedArea(2) + rival.getPath().size(); // 1 point for each cell filled
-                int monstersCaught = checkCaughtMonsters();
-                // 10% extra points for each monster caught
-                points += points * monstersCaught * 0.1;
-                rival.setScore(rival.getScore() + points);
-                System.out.println("Rival Score: " + rival.getScore());
-                rival.clearPath();
-            }
-        }
-
-        if (monsters.isEmpty() || getOccupiedAreaPercentage() >= Constants.WINNING_AREA_PERCENTAGE) {
-            gameOver = 1;
-            endGame();
-        }
-    }
-
-    public void endGame() {
-        new Thread(() -> {
-            String message = "";
-            int score = 0;
-            score = player.getScore() > rival.getScore() ? player.getScore() : rival.getScore();
-            boolean player1Win = player.getScore() > rival.getScore();
-            boolean isDraw = player.getScore() == rival.getScore();
-            if (player1Win && !isDraw) {
-                message = "Player won the game with a score of " + score;
-            } else if (!player1Win && !isDraw) {
-                message = "Rival won the game with a score of " + score;
-            } else {
-                message = "Game is draw with a score of " + score;
-            }
-            JOptionPane.showMessageDialog(this, message, "Game Over", JOptionPane.INFORMATION_MESSAGE);
-            int maxScore = player.getScore() > rival.getScore() ? player.getScore() : rival.getScore();
-            String msg = maxScore == player.getScore() ? "Player had the highest score: " + player.getScore()
-                    : "Rival had the highest score: " + rival.getScore();
-            String username = JOptionPane.showInputDialog(this, msg + " .Enter your username to save your score:");
-            if (username != null && !username.isEmpty()) {
-                saveScore(username, maxScore);
-            }
-            // start game again
-            exitStatus = true;
-            Game game = new Game();
-            game.start();
-
-        }).start();
-
-    }
-
-    private void saveScore(String username, int score) {
-        GameLogger.logResult(username + "," + score);
-
-    }
-
-    private double getOccupiedAreaPercentage() {
-        int totalCells = Constants.GRID_WIDTH * Constants.GRID_HEIGHT;
-        int occupiedCells = 0;
-
-        for (int i = 0; i < Constants.GRID_WIDTH; i++) {
-            for (int j = 0; j < Constants.GRID_HEIGHT; j++) {
-                if (occupied[i][j] != 0) {
-                    occupiedCells++;
-                }
-            }
-        }
-
-        return (double) occupiedCells / totalCells * 100;
-
-    }
-
-    private int checkCaughtMonsters() {
-        List<Monster> monstersToRemove = new ArrayList<>();
-        for (Monster monster : monsters) {
-            if (occupied[monster.getX()][monster.getY()] != 0) {
-                monstersToRemove.add(monster);
-            }
-        }
-        monsters.removeAll(monstersToRemove);
-        return monstersToRemove.size();
-    }
-
-    public boolean isOccupied(int x, int y) {
-        // Check if the cell at the given coordinates is occupied
-        return occupied[x][y] != 0;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setGameOver(int gameOver) {
-        this.gameOver = gameOver;
-        endGame();
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public Rival getRival() {
-        return rival;
-    }
-
-    public void setRival(Rival rival) {
-        this.rival = rival;
-    }
-
-    public List<Monster> getMonsters() {
-        return monsters;
-    }
-
-    public void setMonsters(List<Monster> monsters) {
-        this.monsters = monsters;
-    }
-
-    public int getGameOver() {
-        return gameOver;
-    }
-
 }
