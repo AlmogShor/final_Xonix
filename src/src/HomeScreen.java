@@ -14,6 +14,12 @@ public class HomeScreen extends JPanel implements ActionListener {
     private JComboBox<String> rivalComboBox;
     private JComboBox<String> monsterComboBox;
 
+    /**
+     * Constructs a {@code HomeScreen} panel with all the components needed for the game setup.
+     * It initializes UI components and configures event handling.
+     *
+     * @param frame The main application window frame to which this panel will be added
+     */
     public HomeScreen(JFrame frame) {
         HomeScreen.frame = frame;
         startButton = new JButton("Start Game");
@@ -29,6 +35,13 @@ public class HomeScreen extends JPanel implements ActionListener {
         startButton.addActionListener(this);
     }
 
+    /**
+     * Handles action events triggered by the user interface, specifically the start button.
+     * It reads the selected options from the combo boxes, sets game configuration accordingly,
+     * and starts the game.
+     *
+     * @param e The action event that triggers this method
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         // Get selected options and start the game
