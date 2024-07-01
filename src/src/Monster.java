@@ -3,18 +3,34 @@ package src;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Color;
+
 import utils.*;
 
+/**
+ * The {@code Monster} class defines the properties and behaviors of monsters in the game.
+ * It includes methods to initialize their position and to move them towards the player or rival based on proximity.
+ */
 public class Monster {
-    private int x, y;
-    private GamePanel gamePanel;
+    private int x, y;  // Current position coordinates of the monster
+    private GamePanel gamePanel;  // Reference to the game panel for accessing other game components
 
+    /**
+     * Constructs a Monster and initializes its position.
+     *
+     * @param gamePanel The game panel which contains this monster and is used to interact with other game components
+     * @param startX    The initial X position of the monster
+     * @param startY    The initial Y position of the monster
+     */
     public Monster(GamePanel gamePanel, int startX, int startY) {
         this.gamePanel = gamePanel;
         this.x = startX;
         this.y = startY;
     }
 
+    /**
+     * Moves the monster towards the closest target (either the player or rival) who is not in a safe zone.
+     * The movement strategy is simple: it moves one unit closer to the target in either the X or Y direction.
+     */
     public void move() {
 
         // Get the current positions of the player and rival

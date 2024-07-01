@@ -24,8 +24,8 @@ public class GamePanel extends JPanel {
      * Constructs a {@code GamePanel} with specific game elements including player, rival, and monsters.
      * It initializes the game grid where game interactions occur.
      *
-     * @param player The player object
-     * @param rival The rival object
+     * @param player   The player object
+     * @param rival    The rival object
      * @param monsters The list of monsters in the game
      */
     public GamePanel(Player player, Rival rival, List<Monster> monsters) {

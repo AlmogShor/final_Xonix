@@ -23,9 +23,9 @@ public class HomeScreen extends JPanel implements ActionListener {
     public HomeScreen(JFrame frame) {
         HomeScreen.frame = frame;
         startButton = new JButton("Start Game");
-        sizeComboBox = new JComboBox<>(new String[] { "Small", "Medium", "Large" });
-        rivalComboBox = new JComboBox<>(new String[] { "Player", "AI" });
-        monsterComboBox = new JComboBox<>(new String[] { "1", "2", "3", "4", "5" });
+        sizeComboBox = new JComboBox<>(new String[]{"Small", "Medium", "Large"});
+        rivalComboBox = new JComboBox<>(new String[]{"Player", "AI"});
+        monsterComboBox = new JComboBox<>(new String[]{"1", "2", "3", "4", "5"});
 
         add(startButton);
         add(sizeComboBox);

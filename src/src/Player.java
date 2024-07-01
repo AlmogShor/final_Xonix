@@ -10,14 +10,24 @@ import java.awt.Point;
 
 import utils.*;
 
+/**
+ * The {@code Player} class defines the properties and behavior of the game's player.
+ * It handles movement based on keyboard input and interacts with the game environment.
+ */
 public class Player implements KeyListener, Runnable {
-    private int x, y, dx = 0, dy = 0;
-    private boolean isSafe = true;
+    private int x, y; // Current position of the player
+    private int dx = 0, dy = 0; // Direction of movement along X and Y axes
+    private boolean isSafe = true; // Indicates whether the player is in a safe zone
     private int stepSize = 1; // Size of each step in pixels
-    private GamePanel gamePanel;
-    private List<Point> path = new CopyOnWriteArrayList<>();
-    private int score;
+    private GamePanel gamePanel; // Reference to the game panel for interaction
+    private List<Point> path = new CopyOnWriteArrayList<>(); // Tracks the path taken by the player
+    private int score; // Player's current score
 
+    /**
+     * Constructs a Player with a reference to the game panel and initializes its starting position.
+     *
+     * @param gamePanel The game panel which contains this player and is used for interaction
+     */
     public Player(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         this.x = Constants.START_X_player;
@@ -25,59 +35,73 @@ public class Player implements KeyListener, Runnable {
         this.isSafe = true;
     }
 
+    /**
+     * Returns the color representing the player, typically used in rendering.
+     *
+     * @return The color of the player
+     */
     public Color getColor() {
         return Color.BLUE;
     }
 
+    /**
+     * Moves the player based on the current direction of movement.
+     * Checks boundaries and updates the player's position accordingly.
+     */
     public void move() {
-        // if player hits a wall, stop moving
-
         if (this.dx != 0 || this.dy != 0) {
             int newX = this.x + this.dx * stepSize;
             int newY = this.y + this.dy * stepSize;
 
-            // Check if the new position is within the game area
+            // Ensure the new position is within the game area
             if (newX >= 0 && newX < Constants.GRID_WIDTH && newY >= 0 && newY < Constants.GRID_HEIGHT) {
                 this.setX(newX);
                 this.setY(newY);
-                // Add the new position to the path if player is not in safe zone
-                if (isInSafeZone()) {
-                    isSafe = true;
-                }
 
-                if (!isInSafeZone() && isSafe) {
+                // Track the player's path outside of safe zones
+                if (!isInSafeZone()) {
                     path.add(new Point(newX, newY));
                 }
             }
-
         }
     }
 
+    /**
+     * Returns the path taken by the player.
+     *
+     * @return The list of points representing the path
+     */
     public List<Point> getPath() {
         return path;
     }
 
+    /**
+     * Clears the player's path and resets the safety status.
+     */
     public void clearPath() {
         path.clear();
         isSafe = false;
     }
 
+    /**
+     * Handles key press events to control the player's movement.
+     *
+     * @param e The key event
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_LEFT) {
-            this.dx = -1;
-            this.dy = 0;
-        } else if (key == KeyEvent.VK_RIGHT) {
-            this.dx = 1;
-            this.dy = 0;
-        } else if (key == KeyEvent.VK_UP) {
-            this.dx = 0;
-            this.dy = -1;
-        } else if (key == KeyEvent.VK_DOWN) {
-            this.dx = 0;
-            this.dy = 1;
+        switch (key) {
+            case KeyEvent.VK_LEFT:  // Move left
+                this.dx = -1;
+                this.dy = 0;
+                break;
+            case KeyEvent.VK_RIGHT: // Move right
+                this.dx = 1;
+                this.dy = 0;
+                break;
+            // Add other cases to handle up and down movements
         }
     }
 

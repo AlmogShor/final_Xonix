@@ -1,6 +1,7 @@
 package src;
 
 import javax.swing.JOptionPane;
+
 import utils.*;
 
 /**
@@ -16,7 +17,7 @@ public class GameLoop implements Runnable {
      * This sets up the loop with the components necessary for game execution.
      *
      * @param gamePanel The {@code GamePanel} object that represents the game display
-     * @param task The {@code Runnable} task that updates the game state
+     * @param task      The {@code Runnable} task that updates the game state
      */
     public GameLoop(GamePanel gamePanel, Runnable task) {
         this.gamePanel = gamePanel;

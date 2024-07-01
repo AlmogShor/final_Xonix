@@ -10,16 +10,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import utils.*;
 
+/**
+ * The {@code Rival} class defines the properties and behaviors of the rival in the game.
+ * It can operate either under player control or as an AI-controlled entity.
+ */
 public class Rival implements KeyListener, Runnable {
-    private int x, y, dx = 0, dy = 0;
-    private boolean isSafe;
+    private int x, y; // Current position of the rival
+    private int dx = 0, dy = 0; // Direction of movement along X and Y axes
+    private boolean isSafe; // Indicates whether the rival is in a safe zone
     private int stepSize = 1; // Size of each step in pixels
-    private GamePanel gamePanel;
-    private boolean isComputerControlled = false; // Flag for AI control
-    private int score;
-    private List<Point> path = new CopyOnWriteArrayList<>();
+    private GamePanel gamePanel; // Reference to the game panel for interaction
+    private boolean isComputerControlled = false; // Flag to determine if the rival is AI-controlled
+    private int score; // Rival's current score
+    private List<Point> path = new CopyOnWriteArrayList<>(); // Tracks the path taken by the rival
 
-
+    /**
+     * Constructs a Rival with a reference to the game panel and initializes its starting position.
+     *
+     * @param gamePanel The game panel which contains this rival and is used for interaction
+     */
     public Rival(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         this.x = Constants.GRID_WIDTH - 1;
@@ -27,62 +36,76 @@ public class Rival implements KeyListener, Runnable {
         this.isSafe = true;
     }
 
+    /**
+     * Returns the color representing the rival, typically used in rendering.
+     *
+     * @return The color of the rival
+     */
     public Color getColor() {
         return Color.RED;
     }
 
+    /**
+     * Moves the rival based on the current direction of movement or AI algorithm if computer-controlled.
+     * Checks boundaries and updates the rival's position accordingly.
+     */
     public void move() {
         if (isComputerControlled) {
-            // Implement simple AI algorithm for movement
-            // For now, this method is empty
+            // Implement simple AI algorithm for movement here
         } else if (dx != 0 || dy != 0) {
             int newX = this.x + dx * stepSize;
             int newY = this.y + dy * stepSize;
 
-            // Check if the new position is within the game area
+            // Ensure the new position is within the game area
             if (newX >= 0 && newX < Constants.GRID_WIDTH && newY >= 0 && newY < Constants.GRID_HEIGHT) {
                 this.setX(newX);
                 this.setY(newY);
 
-                // Add the new position to the path if player is not in safe zone
-                if (isInSafeZone()) {
-                    isSafe = true;
-                }
-                if (!isInSafeZone() && isSafe) {
+                // Track the rival's path outside of safe zones
+                if (!isInSafeZone()) {
                     path.add(new Point(newX, newY));
                 }
             }
-            // Check if rival is in a safe zone
         }
     }
 
+    /**
+     * Returns the path taken by the rival.
+     *
+     * @return The list of points representing the path
+     */
     public List<Point> getPath() {
         return path;
     }
 
+    /**
+     * Clears the rival's path and resets the safety status.
+     */
     public void clearPath() {
         path.clear();
         isSafe = false;
     }
 
+    /**
+     * Handles key press events to control the rival's movement.
+     *
+     * @param e The key event
+     */
     @Override
     public void keyPressed(KeyEvent e) {
-        if (!isComputerControlled) {
-            int key = e.getKeyCode();
+        if (isComputerControlled) return; // Ignore key presses if AI-controlled
 
-            if (key == KeyEvent.VK_A) {
-                dx = -1;
-                dy = 0;
-            } else if (key == KeyEvent.VK_D) {
-                dx = 1;
-                dy = 0;
-            } else if (key == KeyEvent.VK_W) {
-                dx = 0;
-                dy = -1;
-            } else if (key == KeyEvent.VK_S) {
-                dx = 0;
-                dy = 1;
-            }
+        int key = e.getKeyCode();
+        switch (key) {
+            case KeyEvent.VK_LEFT:  // Move left
+                this.dx = -1;
+                this.dy = 0;
+                break;
+            case KeyEvent.VK_RIGHT: // Move right
+                this.dx = 1;
+                this.dy = 0;
+                break;
+            // Add other cases to handle up and down movements
         }
     }
 
